@@ -39,38 +39,65 @@ public class TPhysicsRaycaster : MonoBehaviour {
 	public bool drawDebugRays = false;
 	#endif
 
-	[SerializeField] TBasePointer pointer;
+
 	[SerializeField] float distance;
 	[SerializeField] Ray lastRay;
 	[SerializeField] RaycastHit lastRaycastHit;
 
 	BoolReactiveProperty hitRp = new BoolReactiveProperty(false);
 
+	public IObservable<RaycastResult> OnPointerEnter{
+		get{ return hitRp
+				.Where (x => x)
+				.Select (x => GetResult ());
+			}
+	}
+
+	public IObservable<GameObject> OnPointerExit{
+		get{
+			return hitRp
+				.Pairwise()
+				.Where (x => !x.Current && x.Previous)
+				.Select (x => lastRaycastHit.collider.gameObject);
+		}
+	}
+
+	public IObservable<RaycastResult> OnPointerHover{
+		get{
+			return this.UpdateAsObservable ()
+				.Where (_ => hitRp.Value)
+				.Select (x => GetResult ());
+		}
+	}
 	void Start(){
-		SetListener ();
+		this.UpdateAsObservable ()
+			.Subscribe (_ => {
+				Cast();
+				MaybeDrawDebugRaysForEditor(Color.red);
+			});
 	}
 
 	void SetListener(){
-		hitRp
-			.Where(x=>x)
-			.Subscribe (_ => {
-				if(pointer != null)
-					pointer.OnPointerEnter(GetResult(), true);
-			});
-		hitRp
-			.Where (x => !x)
-			.Skip(1) // 初期値はスキップ
-			.Subscribe (_ => {
-				if(pointer != null)
-					pointer.OnPointerExit(lastRaycastHit.collider.gameObject);
-		});
-
-		this.UpdateAsObservable()
-			.Where(_=>hitRp.Value)
-			.Subscribe(_=>{
-				if(pointer != null)
-					pointer.OnPointerHover(GetResult(), true);
-			});
+//		hitRp
+//			.Where(x=>x)
+//			.Subscribe (_ => {
+//				if(pointer != null)
+//					pointer.OnPointerEnter(GetResult(), true);
+//			});
+//		hitRp
+//			.Where (x => !x)
+//			.Skip(1) // 初期値はスキップ
+//			.Subscribe (_ => {
+//				if(pointer != null)
+//					pointer.OnPointerExit(lastRaycastHit.collider.gameObject);
+//		});
+//
+//		this.UpdateAsObservable()
+//			.Where(_=>hitRp.Value)
+//			.Subscribe(_=>{
+//				if(pointer != null)
+//					pointer.OnPointerHover(GetResult(), true);
+//			});
 
 		this.UpdateAsObservable ()
 			.Subscribe (_ => {
@@ -79,7 +106,7 @@ public class TPhysicsRaycaster : MonoBehaviour {
 		});
 	}
 
-	RaycastResult GetResult(){
+	protected RaycastResult GetResult(){
 		return new RaycastResult () {
 			gameObject = lastRaycastHit.collider.gameObject,
 			module = null,
@@ -106,4 +133,5 @@ public class TPhysicsRaycaster : MonoBehaviour {
 		}
 		#endif  // UNITY_EDITOR
 	}
+
 }
