@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312a361d614cc439bafec11d2b94e6d9, type: 3}
+  m_Name: VRSScreenSetting
+  m_EditorClassIdentifier: 
+  windows:
+  - id: 1
+    name: UIWindow
+  screens:
+  - id: 101
+    windowId: 1
+    name: ScreenTitle
+  - id: 102
+    windowId: 1
+    name: ScreenSelectDevice
+  - id: 103
+    windowId: 1
+    name: ScreenConnectionGear
+  - id: 104
+    windowId: 1
+    name: ScreenConnectionGun
+  - id: 105
+    windowId: 1
+    name: ScreenGun
+  - id: 106
+    windowId: 1
+    name: ScreenGear

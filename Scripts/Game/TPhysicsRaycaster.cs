@@ -46,6 +46,11 @@ public class TPhysicsRaycaster : MonoBehaviour {
 
 	BoolReactiveProperty hitRp = new BoolReactiveProperty(false);
 
+	public bool IsPointerHover{
+		get{ return hitRp.Value; }
+	}
+
+
 	public IObservable<RaycastResult> OnPointerEnter{
 		get{ return hitRp
 				.Where (x => x)
@@ -106,7 +111,7 @@ public class TPhysicsRaycaster : MonoBehaviour {
 		});
 	}
 
-	protected RaycastResult GetResult(){
+	public RaycastResult GetResult(){
 		return new RaycastResult () {
 			gameObject = lastRaycastHit.collider.gameObject,
 			module = null,
